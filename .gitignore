@@ -1,0 +1,9 @@
+BayesBook.Rproj
+.R**
+.Renviron
+.RData
+.RDataTmp
+.Rhistory
+.Rproj.user/**
+.R/**
+.Rproj.user
