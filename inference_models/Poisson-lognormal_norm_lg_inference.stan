@@ -8,12 +8,7 @@ data {
 
 transformed data {
   vector<lower=-1, upper=1>[S] design2 = 2 * design - rep_vector(1, S);
-  real<lower=0> mean_eff_length = mean(log_l_g);
-  vector[G] eff_log_l_g = log_l_g - rep_vector(mean_eff_length, G);
-  real<lower=0> expected_mean;
-  for (i in 1:S) {
-    expected_mean = sum(expression[, i]) * 1.0 / (G * S);
-  }
+  real<lower=0> expected_mean = sum(expression[, 1])/sum(log_l_g);
 }
 
 parameters {
@@ -22,9 +17,13 @@ parameters {
   vector[G] alpha;                     
   vector[G] beta;
   real<lower=0>  sigma_beta;
-  vector[S-1] log_norm_factors;
+  vector[S-1] log_norm_factors_ref;
   matrix[G, S] error;
   real<lower=0> sigma_error;
+}
+
+transformed parameters {
+  vector[S] log_norm_factors = append_col(0, log_norm_factors_ref);
 }
 
 model {
@@ -38,9 +37,8 @@ model {
   log_norm_factors ~ normal(0, 0.05);
   
   for (i in 1:G) {
-    expression[i, 1] ~ poisson_log(alpha[i] + beta[i] * design2[1] + error[i, 1] + eff_log_l_g[i]);
-    for (j in 2:S) {
-      expression[i, j] ~ poisson_log(alpha[i] + beta[i] * design2[j] + error[i, j] + eff_log_l_g[i] + log_norm_factors[j-1]);
+    for (j in 1:S) {
+      expression[i, j] ~ poisson_log(alpha[i] + beta[i] * design2[j] + error[i, j] + log_l_g[i] + log_norm_factors[j]);
     }
   }
 }

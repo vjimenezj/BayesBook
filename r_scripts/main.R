@@ -1,5 +1,6 @@
 library(rstan)
 library(ggplot2)
+library(beepr)
 
 options(scipen = 999)
 
@@ -59,13 +60,15 @@ fit <- stan(file=paste0(dir_models_infer, model, "_inference.stan"),
              data=input_data, seed=493848, iter = 2 * iter_per_chain, 
              refresh = 400, chains = nchains, 
              control = list(max_treedepth = 10))
+beep()
+
 
 inference_summary <- summary(fit, probs = c(0.025, 0.975))$summary
 simu_ensemble <- extract(fit_ensemble, permuted = FALSE, inc_warmup = FALSE)
 iteration <- 1
 chain <- 1
 
-par_names_means <- c("mu_theta", "sigma_theta", "theta")
+par_names_means <- c("mu_alpha", "sigma_alpha", "alpha")
 par_names_changes <- "beta"
 par_names_errors <- "error"
 par_names_norm <- "log_norm_factors"
