@@ -4,7 +4,8 @@ library(ggplot2)
 options(scipen = 999)
 
 # Names of the models to simulate and infer
-model <- "/Poisson-lognormal_norm_lg"
+model <- "/Poisson-lognormal_lg"
+# model <- "/Poisson-lognormal_norm_lg"
 # model <- "/Poisson-lognormal"
 # model <- "/NB"
 model_name <- "Poisson(beta,error)-Normalized-EffectiveLength"
@@ -71,7 +72,7 @@ par_names_norm <- "log_norm_factors"
 par_names <- list(par_names_means, par_names_changes, 
                   par_names_errors, par_names_norm)
 
-
+dir.create(paste0(dir_local, "/results/"))
 for (parameters in par_names) {
   title <- paste0("Simulation_", model_name, "-Inference_", model_name,
                   "-Samples_", S, "-", paste(parameters, collapse = ","))
@@ -80,7 +81,7 @@ for (parameters in par_names) {
                             iteration = 1, chain = 1, title = title,
                             inference_summary = inference_summary)
   print(p)
-  ggsave(paste0(dir_local, "/Exploration/Plots/", title, ".png"))
+  ggsave(paste0(dir_local, "/results/", title, ".png"))
 }
 
 if (substr(model_name, start = 1, stop = 2) == "NB") {
@@ -88,7 +89,7 @@ if (substr(model_name, start = 1, stop = 2) == "NB") {
   phi_title <- paste0("Simulation_", model_name, "-Inference_", model_name, "-Samples_", S, "-Phi=1")
   print(hist(phi_infer, main = phi_title))
   print(abline(v = 1))
-  ggsave(paste0(dir_local, "/Exploration/Plots/", phi_title, ".png"))
+  ggsave(paste0(dir_local, "/results/", phi_title, ".png"))
 }
 
 
