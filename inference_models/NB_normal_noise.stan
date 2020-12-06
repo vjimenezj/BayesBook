@@ -1,15 +1,15 @@
 data {
+  int N;
+  vector[N] alpha;
   real<lower=0> phi;
   real<lower=0> sigma_error;
 }
 
 transformed data {
-  int N=1000;
-  int M=10000;
+  int M=1000;
 }
 
 parameters {
-  vector[N] alpha;
   matrix[N, M] gamma;
   matrix[N, M] error;
   real<lower=0, upper=2000000000> mixed_phi;
@@ -21,7 +21,6 @@ transformed parameters{
 }  
 
 model{
-  alpha ~ normal(5, 1.5);
   for (i in 1:N) {
     gamma[i, ] ~ gamma(phi, phi/alpha[i]) ;
   }
