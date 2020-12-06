@@ -102,14 +102,12 @@ if (substr(model_name, start = 1, stop = 2) == "NB") {
   p
   ggsave(paste0(dir_local, "/results/", phi_title, ".png"))
 }
-
-data <- list("phi" = 1, "sigma_error" = 0.3)
-options(mc.cores = 4)
-mc.cores = parallel::detectCores()
-nchains <- 4
+N <- 100
+alpha <- rnorm(N, 5, 1.5)
+data <- list("N" = N, "alpha" = alpha,"phi" = 1, "sigma_error" = 0.3)
 iter_per_chain <- 2000
 fit_new <- stan(file=paste0(dir_models_infer, "/NB_normal_noise.stan"),
             data=data, seed=493848, iter = 2 * iter_per_chain, 
-            refresh = 400, chains = nchains, 
+            refresh = 400, chains = 1, 
             control = list(max_treedepth = 10))
 beep()
