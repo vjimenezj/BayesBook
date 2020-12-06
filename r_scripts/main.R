@@ -5,13 +5,14 @@ library(beepr)
 options(scipen = 999)
 
 # Names of the models to simulate and infer
-model <- "/Poisson-lognormal_lg"
+# model <- "/Poisson-lognormal_lg"
 # model <- "/Poisson-lognormal_norm_lg"
 # model <- "/Poisson-lognormal"
-# model <- "/NB"
-model_name <- "Poisson(beta,error)-Normalized-EffectiveLength"
+model <- "/NB"
+# model_name <- "Poisson(beta,error)-Normalized-EffectiveLength"
+# model_name <- "Poisson(beta,error)-EffectiveLength"
 # model_name <- "Poisson(beta,error)"
-# model_name <- "NB(beta,error)"
+model_name <- "NB(beta,error)"
 
 # Local directory
 dir_local <- Sys.getenv("BAYESBOOK_PATH")
@@ -71,7 +72,7 @@ chain <- 1
 par_names_means <- c("mu_alpha", "sigma_alpha", "alpha")
 par_names_changes <- "beta"
 par_names_errors <- "error"
-par_names_norm <- "log_norm_factors"
+#par_names_norm <- "log_norm_factors"
 par_names <- list(par_names_means, par_names_changes, 
                   par_names_errors, par_names_norm)
 
@@ -88,11 +89,27 @@ for (parameters in par_names) {
 }
 
 if (substr(model_name, start = 1, stop = 2) == "NB") {
-  phi_infer <- extract(fit)$phi
+  phi_infer <- as.data.frame(extract(fit)$phi)
+  colnames(phi_infer) <- "Phi"
   phi_title <- paste0("Simulation_", model_name, "-Inference_", model_name, "-Samples_", S, "-Phi=1")
-  print(hist(phi_infer, main = phi_title))
-  print(abline(v = 1))
+  
+  p <- ggplot(phi_infer, aes(Phi)) + 
+   # geom_histogram(aes(y=..density..), binwidth = 0.01) +
+    geom_density(alpha=.5, fill="#00FF00") +
+    geom_vline(xintercept = 1, color = "blue", size=1.5) +
+    theme_classic()
+  
+  p
   ggsave(paste0(dir_local, "/results/", phi_title, ".png"))
 }
 
-
+data <- list("phi" = 1, "sigma_error" = 0.3)
+options(mc.cores = 4)
+mc.cores = parallel::detectCores()
+nchains <- 4
+iter_per_chain <- 2000
+fit_new <- stan(file=paste0(dir_models_infer, "/NB_normal_noise.stan"),
+            data=data, seed=493848, iter = 2 * iter_per_chain, 
+            refresh = 400, chains = nchains, 
+            control = list(max_treedepth = 10))
+beep()
