@@ -104,10 +104,41 @@ if (substr(model_name, start = 1, stop = 2) == "NB") {
 }
 N <- 100
 alpha <- rnorm(N, 5, 1.5)
+alpha <- alpha[order(alpha)]
 data <- list("N" = N, "alpha" = alpha,"phi" = 1, "sigma_error" = 0.3)
+options(mc.cores = 4)
+mc.cores = parallel::detectCores()
+nchains <- 4
 iter_per_chain <- 2000
 fit_new <- stan(file=paste0(dir_models_infer, "/NB_normal_noise.stan"),
             data=data, seed=493848, iter = 2 * iter_per_chain, 
-            refresh = 400, chains = 1, 
+            refresh = 400, chains = nchains,
             control = list(max_treedepth = 10))
 beep()
+
+posterior <- extract(fit_new, permuted = FALSE)
+str(posterior)
+dimnames(posterior)[[3]]
+
+
+
+df_effect <- cbind(as.vector(posterior[,,1]), as.vector(posterior[,,101]), as.vector(posterior[,,202]))
+colnames(df_effect) <- c("gamma_prior", "normal_noise", "convolution")
+library(reshape)
+df_effect2 <- melt(df_effect)
+p <- ggplot(df_effect2, aes(value), color = X2) +
+        geom_density()
+
+
+phi_infer <- as.data.frame(extract(fit_new)$mixed_phi)
+colnames(phi_infer) <- "Phi"
+p <- ggplot(phi_infer, aes(Phi)) + 
+  # geom_histogram(aes(y=..density..), binwidth = 0.01) +
+  geom_density(alpha=.5, fill="#00FF00") +
+  geom_vline(xintercept = 1, color = "blue", size=1.5) +
+  theme_classic()
+p
+
+
+library(shinystan)
+launch_shinystan(fit_new)
