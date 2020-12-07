@@ -23,7 +23,7 @@ parameters {
 }
 
 transformed parameters {
-  vector[S] log_norm_factors = append_col(0, log_norm_factors_ref);
+  vector[S] log_norm_factors = append_row(0, log_norm_factors_ref);
 }
 
 model {
