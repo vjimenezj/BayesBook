@@ -6,7 +6,7 @@ a <- Sys.time()
 # Local directory
 dir_local <- Sys.getenv("HMDATR_PATH")
 if ((dir_local) == "") {
-  dir_local <- "/data3/vjimenezj/HMDATR"
+  dir_local <- "/data_lab_MAP/vjimenezj/HMDATR"
 }
 print(paste0("Local directory: ", dir_local))
 

@@ -15,7 +15,7 @@ titles <- c("Poisson(beta,error)-Normalized-EffectiveLength",
 # Local directory
 dir_local <- Sys.getenv("BAYESBOOK_PATH")
 if ((dir_local) == "") {
-  dir_local <- "/data3/vjimenezj/BayesBook"
+  dir_local <- "/data_lab_MAP/vjimenezj/BayesBook"
 }
 print(paste0("Local directory: ", dir_local))
 

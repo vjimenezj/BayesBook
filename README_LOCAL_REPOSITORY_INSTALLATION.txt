@@ -19,5 +19,5 @@ BINPREF="C:/RBuildTools/4.0/mingw64/bin/"
 CXX14FLAGS=-O3 -mtune=native
 
 #File .Renviron Centos7 local CNIC station:
-CMDSTAN_PATH = "/data3/vjimenezj/cmdstan-2.23.0"
-BAYESBOOK_PATH = "/data3/vjimenezj/HMDATR"
+CMDSTAN_PATH = "/data_lab_MAP/vjimenezj/cmdstan-2.23.0"
+BAYESBOOK_PATH = "/data_lab_MAP/vjimenezj/HMDATR"
