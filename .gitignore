@@ -8,4 +8,6 @@ BayesBook.Rproj
 .R/**
 .Rproj.user
 
-.results**
+**.rds
+**.RDS
+**.Rds
