@@ -32,7 +32,7 @@ model {
   alpha ~ normal(mu_alpha, sigma_alpha);
   sigma_beta ~ std_normal();
   beta ~ normal(0, sigma_beta);
-  log_norm_factors ~ normal(0, 0.05);
+  log_norm_factors_ref ~ normal(0, 0.05);
   phi ~ uniform(0, 2000000000);
     for (i in 1:G) {
     for (j in 1:S) {

@@ -12,7 +12,7 @@ transformed data {
 }
 
 generated quantities {
-  real  mu_alpha = 3 + log(1000);                 
+  real  mu_alpha = 2;                 
   real<lower=0>  sigma_alpha = 2;     
   real<lower=0>  sigma_beta = 1;     
   vector[G] alpha;                    

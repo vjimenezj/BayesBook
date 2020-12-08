@@ -53,7 +53,7 @@ expression <- extract(fit_ensemble, permuted = FALSE, inc_warmup = FALSE,
 #expression_real <- matrix(expression[1, 1, ], nrow = G, ncol = S, byrow = FALSE)
 expression_real <- vec_into_mat(expression)
 input_data <- list("G" = G, "S" = S, "expression" = expression_real, 
-                   "design" = design, "log_l_g" = log_l_g)
+                   "design" = design, "eff_lenght" = eff_lenght)
 options(mc.cores = 4)
 mc.cores = parallel::detectCores()
 nchains <- 4

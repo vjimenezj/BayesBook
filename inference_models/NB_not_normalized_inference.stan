@@ -16,7 +16,6 @@ parameters {
   vector[G] alpha;                     
   vector[G] beta;
   real<lower=0>  sigma_beta;
-  matrix[G, S] error;
   real<lower=0, upper=2000000000> phi;
 }
 
@@ -26,7 +25,6 @@ model {
   alpha ~ normal(mu_alpha, sigma_alpha);
   sigma_beta ~ std_normal();
   beta ~ normal(0, sigma_beta);
-  to_row_vector(error) ~ normal(0, 0.3); 
   phi ~ uniform(0, 2000000000);
 
   

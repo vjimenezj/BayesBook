@@ -15,7 +15,6 @@ generated quantities {
   vector[G] alpha;                    
   vector[G] beta;                    
   int<lower=0> expression[G, S]; 
-  matrix[G, S] error;
   real<lower=0, upper=2000000000> phi = 1;
   for (i in 1:G) {
     alpha[i] = normal_rng(mu_alpha, sigma_alpha);
@@ -25,8 +24,7 @@ generated quantities {
   }
   for (i in 1:G) {
     for (j in 1:S) {
-    error[i, j] = normal_rng(0, 0.3);
-    expression[i, j] = neg_binomial_2_log_rng(alpha[i] + beta[i] * design2[j] + error[i, j], phi);
+    expression[i, j] = neg_binomial_2_log_rng(alpha[i] + beta[i] * design2[j], phi);
     }
   }
 }
