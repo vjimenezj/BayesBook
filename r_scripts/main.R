@@ -1,6 +1,5 @@
 library(rstan)
 library(ggplot2)
-library(beepr)
 
 options(scipen = 999)
 
@@ -24,7 +23,7 @@ phi <- 1
 # Data list for sample generation
 simu_data <- list("G" = G, "S" = S, "design" = design, "eff_length" = eff_length, "phi" = phi)
 # Sampling with Stan
-fit_ensemble <- stan(file=paste0(dir_models_sim, "/simulation_models/NB_simulation.stan"),
+fit_ensemble <- stan(file=paste0(dir_local, "/simulation_models/NB_simulation.stan"),
                      data=simu_data, iter=1, warmup=0, chains=1,
                      refresh=500, seed=4838282, algorithm="Fixed_param")
 
@@ -39,7 +38,7 @@ options(mc.cores = 4)
 mc.cores = parallel::detectCores()
 nchains <- 4
 iter_per_chain <- 2000
-fit <- stan(file=paste0("/inference_models/NB_inference.stan"),
+fit <- stan(file=paste0(dir_local, "/inference_models/NB_inference.stan"),
              data=input_data, seed=493848, iter = 2 * iter_per_chain, 
              refresh = 400, chains = nchains, 
              control = list(max_treedepth = 10))
