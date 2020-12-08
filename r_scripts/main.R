@@ -72,10 +72,8 @@ chain <- 1
 
 par_names_means <- c("mu_alpha", "sigma_alpha", "alpha")
 par_names_changes <- "beta"
-par_names_errors <- "error"
-#par_names_norm <- "log_norm_factors"
-par_names <- list(par_names_means, par_names_changes, 
-                  par_names_errors, par_names_norm)
+par_names_norm <- "log_norm_factors"
+par_names <- list(par_names_means, par_names_changes, par_names_norm)
 
 dir.create(paste0(dir_local, "/results/"))
 for (parameters in par_names) {
