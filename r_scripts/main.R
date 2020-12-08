@@ -4,46 +4,27 @@ library(beepr)
 
 options(scipen = 999)
 
-# Names of the models to simulate and infer
-# model <- "/Poisson-lognormal_lg"
-# model <- "/Poisson-lognormal_norm_lg"
-# model <- "/Poisson-lognormal"
-model <- "/NB"
-# model_name <- "Poisson(beta,error)-Normalized-EffectiveLength"
-# model_name <- "Poisson(beta,error)-EffectiveLength"
-# model_name <- "Poisson(beta,error)"
-model_name <- "NB"
-
-# Local directory
+# Local directory (If the .Renviron file has not been created in the local repository with the location of
+# the repository, this local variable has to be changed into the directory of the repository)
 dir_local <- Sys.getenv("BAYESBOOK_PATH")
-if ((dir_local) == "") {
-  dir_local <- "/data_lab_MAP/vjimenezj/BayesBook"
-}
-print(paste0("Local directory: ", dir_local))
-
-# Model directory
-dir_models_sim <- paste0(dir_local, "/simulation_models")
-dir_models_infer <- paste0(dir_local, "/inference_models")
+# dir_local <- "local_directory_of_BookBayes_repository"
 
 # Loading plotting inferences functions
 source(paste0(dir_local, "/r_scripts/plotting_inferences.R"))
 
 # Simulating and inferring for each of the models
-# Defining the data for sampling from the model
+# Defining the data for sampling from the model prior
 G <- 100
 R <- 10
-# design <- rbind(c(0, 0, 0, 0, 1, 1, 1, 1), c(0, 0, 1, 1, 0, 0, 1, 1))
 design <- c(0, 0, 0, 1, 1, 1)
-# S <- dim(design)[2]
-# C <- dim(design)[1]
 S <- 6
 C <- 2
-eff_lenght <- rnorm(G, 1000, 10)
+eff_length <- rnorm(G, 1000, 10)
 phi <- 1
 # Data list for sample generation
-simu_data <- list("G" = G, "S" = S, "design" = design, "eff_lenght" = eff_lenght, "phi" = phi)
+simu_data <- list("G" = G, "S" = S, "design" = design, "eff_length" = eff_length, "phi" = phi)
 # Sampling with Stan
-fit_ensemble <- stan(file=paste0(dir_models_sim, model, "_simulation.stan"),
+fit_ensemble <- stan(file=paste0(dir_models_sim, "/simulation_models/NB_simulation.stan"),
                      data=simu_data, iter=1, warmup=0, chains=1,
                      refresh=500, seed=4838282, algorithm="Fixed_param")
 
@@ -53,17 +34,15 @@ expression <- extract(fit_ensemble, permuted = FALSE, inc_warmup = FALSE,
 #expression_real <- matrix(expression[1, 1, ], nrow = G, ncol = S, byrow = FALSE)
 expression_real <- vec_into_mat(expression)
 input_data <- list("G" = G, "S" = S, "expression" = expression_real, 
-                   "design" = design, "eff_lenght" = eff_lenght)
+                   "design" = design, "eff_length" = eff_length)
 options(mc.cores = 4)
 mc.cores = parallel::detectCores()
 nchains <- 4
 iter_per_chain <- 2000
-fit <- stan(file=paste0(dir_models_infer, model, "_inference.stan"),
+fit <- stan(file=paste0("/inference_models/NB_inference.stan"),
              data=input_data, seed=493848, iter = 2 * iter_per_chain, 
              refresh = 400, chains = nchains, 
              control = list(max_treedepth = 10))
-beep()
-
 
 inference_summary <- summary(fit, probs = c(0.025, 0.975))$summary
 simu_ensemble <- extract(fit_ensemble, permuted = FALSE, inc_warmup = FALSE)
@@ -75,7 +54,7 @@ par_names_changes <- "beta"
 par_names_norm <- "log_norm_factors"
 par_names <- list(par_names_means, par_names_changes, par_names_norm)
 
-dir.create(paste0(dir_local, "/results/"))
+dir.create(paste0(dir_local, "/plots/"))
 for (parameters in par_names) {
   title <- paste0("Simulation_", model_name, "-Inference_", model_name,
                   "-Samples_", S, "-", paste(parameters, collapse = ","))
@@ -84,7 +63,7 @@ for (parameters in par_names) {
                             iteration = 1, chain = 1, title = title,
                             inference_summary = inference_summary)
   print(p)
-  ggsave(paste0(dir_local, "/results/", title, ".png"))
+  ggsave(paste0(dir_local, "/plots/", title, ".png"))
 }
 
 if (substr(model_name, start = 1, stop = 2) == "NB") {
@@ -99,6 +78,5 @@ if (substr(model_name, start = 1, stop = 2) == "NB") {
     theme_classic()
   
   p
-  ggsave(paste0(dir_local, "/results/", phi_title, ".png"))
+  ggsave(paste0(dir_local, "/plots/", phi_title, ".png"))
 }
-
