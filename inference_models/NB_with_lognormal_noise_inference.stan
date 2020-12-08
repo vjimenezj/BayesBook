@@ -17,6 +17,7 @@ parameters {
   vector[G] beta;
   real<lower=0>  sigma_beta;
   matrix[G, S] error;
+  real<lower=0, upper=2000000000> phi;
 }
 
 model {
@@ -26,10 +27,12 @@ model {
   sigma_beta ~ std_normal();
   beta ~ normal(0, sigma_beta);
   to_row_vector(error) ~ normal(0, 0.3); 
+  phi ~ uniform(0, 2000000000);
+
   
   for (i in 1:G) {
     for (j in 1:S) {
-      expression[i, j] ~ poisson_log(alpha[i] + beta[i] * design2[j] + error[i, j]);
+      expression[i, j] ~ neg_binomial_2_log(alpha[i] + beta[i] * design2[j], phi);
     }
   }
 }

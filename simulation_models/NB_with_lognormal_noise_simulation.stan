@@ -2,7 +2,6 @@ data {
   int<lower=1> G;                     
   int<lower=1> S;                     
   vector<lower=0, upper=1>[S] design;
-  vector<lower=0>[G] log_l_g;
 }
 
 transformed data {
@@ -10,14 +9,14 @@ transformed data {
 }
 
 generated quantities {
-  real  mu_alpha = 6;                 
+  real  mu_alpha = 5;                 
   real<lower=0>  sigma_alpha = 1.5;     
   real<lower=0>  sigma_beta = 1;     
-  real<lower=0>  sigma_error = 0.5;     
   vector[G] alpha;                    
   vector[G] beta;                    
-  real expression[G, S]; 
+  int<lower=0> expression[G, S]; 
   matrix[G, S] error;
+  real<lower=0, upper=2000000000> phi = 1;
   for (i in 1:G) {
     alpha[i] = normal_rng(mu_alpha, sigma_alpha);
   }
@@ -26,8 +25,8 @@ generated quantities {
   }
   for (i in 1:G) {
     for (j in 1:S) {
-    error[i, j] = normal_rng(0, sigma_error);
-    expression[i, j] = poisson_log_rng(alpha[i] + beta[i] * design2[j] + error[i, j] + log_l_g[i]);
+    error[i, j] = normal_rng(0, 0.3);
+    expression[i, j] = neg_binomial_2_log_rng(alpha[i] + beta[i] * design2[j] + error[i, j], phi);
     }
   }
 }

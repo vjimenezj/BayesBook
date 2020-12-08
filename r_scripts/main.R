@@ -12,7 +12,7 @@ model <- "/NB"
 # model_name <- "Poisson(beta,error)-Normalized-EffectiveLength"
 # model_name <- "Poisson(beta,error)-EffectiveLength"
 # model_name <- "Poisson(beta,error)"
-model_name <- "NB(beta,error)"
+model_name <- "NB"
 
 # Local directory
 dir_local <- Sys.getenv("BAYESBOOK_PATH")
@@ -38,9 +38,10 @@ design <- c(0, 0, 0, 1, 1, 1)
 # C <- dim(design)[1]
 S <- 6
 C <- 2
-log_l_g <- log(rnorm(G, 1000, 10))
+eff_lenght <- rnorm(G, 1000, 10)
+phi <- 1
 # Data list for sample generation
-simu_data <- list("G" = G, "S" = S, "design" = design, "log_l_g" = log_l_g)
+simu_data <- list("G" = G, "S" = S, "design" = design, "eff_lenght" = eff_lenght, "phi" = phi)
 # Sampling with Stan
 fit_ensemble <- stan(file=paste0(dir_models_sim, model, "_simulation.stan"),
                      data=simu_data, iter=1, warmup=0, chains=1,
@@ -102,3 +103,4 @@ if (substr(model_name, start = 1, stop = 2) == "NB") {
   p
   ggsave(paste0(dir_local, "/results/", phi_title, ".png"))
 }
+
