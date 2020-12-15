@@ -42,7 +42,7 @@ fit <- stan(file=paste0(dir_local, "/inference_models/NB_inference.stan"),
              refresh = 400, chains = nchains, 
              control = list(max_treedepth = 10))
 
-# Plots for a comparison among the inferred parameters and its simulated values
+# figures for a comparison among the inferred parameters and its simulated values
 inference_summary <- summary(fit, probs = c(0.025, 0.975))$summary
 simu_ensemble <- extract(fit_ensemble, permuted = FALSE, inc_warmup = FALSE)
 iteration <- 1
@@ -52,14 +52,14 @@ par_names_changes <- "beta"
 par_names_norm <- "log_norm_factors"
 par_names <- list(par_names_means, par_names_changes, par_names_norm)
 
-dir.create(paste0(dir_local, "/plots/"))
+dir.create(paste0(dir_local, "/figures/"))
 for (parameters in par_names) {
-  title <- paste0("Simulation_and_Inference_from_NB_model-", paste(parameters, collapse = ","))
+  title <- paste0("Simulation and Inference from NB model - ", paste(parameters, collapse = ","))
   p <- plotting_credibility(parameters, simu_ensemble = simu_ensemble,
                             iteration = 1, chain = 1, title = title,
                             inference_summary = inference_summary)
   print(p)
-  ggsave(paste0(dir_local, "/plots/", title, ".png"))
+  ggsave(paste0(dir_local, "/figures/", title, ".tiff"), dpi = 200)
 }
 
 # Histogram for phi posterior distribution
@@ -73,6 +73,6 @@ p <- ggplot(phi_infer, aes(Phi)) +
   geom_vline(xintercept = 1, color = "blue", size=1.5) +
   theme_classic()
 p
-ggsave(paste0(dir_local, "/plots/", phi_title, ".png"))
+ggsave(paste0(dir_local, "/figures/", phi_title, ".tiff"), dpi = 200)
 
 
