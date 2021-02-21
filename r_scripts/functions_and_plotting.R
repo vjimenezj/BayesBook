@@ -37,8 +37,8 @@ plotting_credibility <- function (par_names, simu_ensemble, iteration, chain,inf
     geom_errorbar(aes(ymax = as.numeric(conf_upper_model), ymin = as.numeric(conf_lower_model))) +
     geom_abline(slope = 1, intercept = 0) + 
     xlab("Real values") + 
-    ylab("Estimated values") + 
-    ggtitle(title)
+    ylab("Estimated values") # + 
+    # ggtitle(title)
   return(p)
 }
 

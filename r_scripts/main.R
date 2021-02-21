@@ -5,7 +5,8 @@ options(scipen = 999)
 
 # Local directory (If the .Renviron file has not been created in the local repository with the location of
 # the repository, this local variable has to be changed into the directory of the repository)
-dir_local <- Sys.getenv("BAYESBOOK_PATH")
+dir_local <- '/data_lab_MAP/vjimenezj/BayesBook/'
+# dir_local <- Sys.getenv("BAYESBOOK_PATH")
 # dir_local <- "local_directory_of_BookBayes_repository"
 
 # Loading plotting inferences functions
@@ -53,13 +54,16 @@ par_names_norm <- "log_norm_factors"
 par_names <- list(par_names_means, par_names_changes, par_names_norm)
 
 dir.create(paste0(dir_local, "/figures/"))
+i <- 1
 for (parameters in par_names) {
   title <- paste0("Simulation and Inference from NB model - ", paste(parameters, collapse = ","))
   p <- plotting_credibility(parameters, simu_ensemble = simu_ensemble,
                             iteration = 1, chain = 1, title = title,
                             inference_summary = inference_summary)
+  assign(paste0('p',i), p)
   print(p)
   ggsave(paste0(dir_local, "/figures/", title, ".tiff"), dpi = 200)
+  i <- i+1
 }
 
 # Histogram for phi posterior distribution
@@ -75,4 +79,9 @@ p <- ggplot(phi_infer, aes(Phi)) +
 p
 ggsave(paste0(dir_local, "/figures/", phi_title, ".tiff"), dpi = 200)
 
+library(ggpubr)
+ggarrange(p1, p2, p3, p, 
+          labels = c("(A)", "(B)", "(C)", "(D)"),
+          ncol = 2, nrow = 2)
+ggsave(paste0(dir_local, "/figures/Figure3.tiff"), dpi = 200)
 
