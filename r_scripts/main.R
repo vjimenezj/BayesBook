@@ -79,9 +79,11 @@ p <- ggplot(phi_infer, aes(Phi)) +
 p
 ggsave(paste0(dir_local, "/figures/", phi_title, ".tiff"), dpi = 200)
 
-library(ggpubr)
-ggarrange(p1, p2, p3, p, 
+library(egg)
+egg::ggarrange(p1, p2, p3, p, 
           labels = c("(A)", "(B)", "(C)", "(D)"),
-          ncol = 2, nrow = 2)
+          ncol = 2, nrow = 2,
+          label.args = list(gp = grid::gpar(font = 2, cex =
+                                              1.2)))
 ggsave(paste0(dir_local, "/figures/Figure3.tiff"), dpi = 200)
 
